@@ -1,6 +1,7 @@
 # from __future__ import annotations
 import pathlib
 import sys
+from importlib.metadata import version
 from typing import Annotated
 from typing import Optional
 
@@ -69,14 +70,19 @@ from ._globals import GLOBALS
 # }
 
 
+def version_callback(value: bool) -> None:
+    if value:
+        print(f"jaz: {version('jaz')}")
+        raise typer.Exit()
+
+
 app = typer.Typer(
     add_completion=False,
     add_help_option=True,
-    help="Render jinja templates from the Command Line.",
 )
 
 
-@app.command(no_args_is_help=True, help="asdf")
+@app.command(no_args_is_help=True, help="Render jinja templates from the Command Line.")
 def main(
     # fmt: off
     # path: Annotated[pathlib.Path, typer.Argument(allow_dash=True)],
@@ -84,6 +90,7 @@ def main(
     output: Annotated[Optional[pathlib.Path], typer.Argument(help="The path to write the rendered output. If not provided the output will be written on STDOUT.")] = None,
     # output: Annotated(pathlib.Path, typer.Argument)
     # mode: Annotated[_UNDEFINED_ENUM, typer.Option(help="The mode")] = _UNDEFINED_ENUM.PEDANTIC,
+    version: Annotated[Optional[bool], typer.Option("--version", callback=version_callback, is_eager=True, help="Display the version of jaz.")] = None,
     # fmt: on
 ) -> int:
     env = jinja2.Environment(
