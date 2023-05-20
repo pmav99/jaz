@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jaz"
-version = "0.1.0"
+version = "0.0.0"
 description = "Render jinja templates from the CLI"
 authors = ["Panos Mavrogiorgos <pmav99@gmail.com>"]
 readme = "README.md"
@@ -20,9 +20,16 @@ mypy = "*"
 [tool.poetry.extras]
 ansible = ["ansible"]
 
+[tool.poetry-dynamic-versioning]
+enable = true
+dirty = false
+
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = [
+    "poetry-core>=1.0.0",
+    "poetry-dynamic-versioning",
+]
+build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.black]
 line-length = 108
