@@ -1,15 +1,12 @@
 # from __future__ import annotations
 import pathlib
-import sys
 from importlib.metadata import version
 from typing import Annotated
 from typing import Optional
 
-import jinja2
 import typer
 
-from ._filters import FILTERS
-from ._globals import GLOBALS
+from . import api
 
 # import shlex
 # import subprocess
@@ -72,7 +69,7 @@ from ._globals import GLOBALS
 
 def version_callback(value: bool) -> None:
     if value:
-        print(f"jaz: {version('jaz')}")
+        print(f"jaz {version('jaz')}")
         raise typer.Exit()
 
 
@@ -90,39 +87,16 @@ def main(
     output: Annotated[Optional[pathlib.Path], typer.Argument(help="The path to write the rendered output. If not provided the output will be written on STDOUT.")] = None,
     # output: Annotated(pathlib.Path, typer.Argument)
     # mode: Annotated[_UNDEFINED_ENUM, typer.Option(help="The mode")] = _UNDEFINED_ENUM.PEDANTIC,
+    no_env: Annotated[bool, typer.Option("--no-env", help="Don't inject environmental variables into jinja's global dictionary.")] = False,
     version: Annotated[Optional[bool], typer.Option("--version", callback=version_callback, is_eager=True, help="Display the version of jaz.")] = None,
     # fmt: on
 ) -> int:
-    env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(path),
+    api.render(
+        path=path,
+        no_env=no_env,
+        output=output,
     )
-    env.filters.update(FILTERS)
-    env.globals.update(GLOBALS)
-    contents = sys.stdin.read() if str(path) == "-" else path.read_text()
-    template = env.from_string(contents)
-    rendered = template.render()
-    print(contents)
-    print()
-    if output:
-        output.write_text(rendered)
-    else:
-        sys.stdout.write(rendered)
-    # print(contents)
-    # print()
-    # print(output)
-    # print()
-    # print(template.render())
     return 0
-
-    # if template.name == "<stdin>":
-    #     stdin = template.read()
-    #     t = jinja.from_string(stdin.decode(yasha.ENCODING))
-    # else:
-    #     t = jinja.get_template(os.path.basename(template.name))
-    #
-    # undefined = _UNDEFINED_MODE[mode]
-    # print(locals())
-    # return 0
 
 
 if __name__ == "__main__":
