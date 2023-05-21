@@ -54,19 +54,6 @@ from . import api
 #         return result.stdout.decode(encoding=ENCODING).strip()
 
 
-# class _UNDEFINED_ENUM(str, enum.Enum):
-#     DEBUG = ("DEBUG",)
-#     PEDANTIC = ("PEDANTIC",)
-#     NORMAL = ("NORMAL",)
-#
-#
-# _UNDEFINED_MODE = {
-#     _UNDEFINED_ENUM.DEBUG: jinja2.DebugUndefined,
-#     _UNDEFINED_ENUM.PEDANTIC: jinja2.StrictUndefined,
-#     _UNDEFINED_ENUM.NORMAL: jinja2.Undefined,
-# }
-
-
 def version_callback(value: bool) -> None:
     if value:
         print(f"jaz {version('jaz')}")
@@ -86,7 +73,7 @@ def main(
     path: Annotated[pathlib.Path, typer.Argument(help="The path to the template file. Use '-' for STDIN.")],
     output: Annotated[Optional[pathlib.Path], typer.Argument(help="The path to write the rendered output. If not provided the output will be written on STDOUT.")] = None,
     # output: Annotated(pathlib.Path, typer.Argument)
-    # mode: Annotated[_UNDEFINED_ENUM, typer.Option(help="The mode")] = _UNDEFINED_ENUM.PEDANTIC,
+    undefined: Annotated[api.UNDEFINED, typer.Option(help="Defines how jinja should treat underfined variables.")] = api.UNDEFINED.STRICT,
     no_env: Annotated[bool, typer.Option("--no-env", help="Don't inject environmental variables into jinja's global dictionary.")] = False,
     version: Annotated[Optional[bool], typer.Option("--version", callback=version_callback, is_eager=True, help="Display the version of jaz.")] = None,
     # fmt: on
@@ -95,6 +82,7 @@ def main(
         path=path,
         no_env=no_env,
         output=output,
+        undefined=undefined,
     )
     return 0
 
