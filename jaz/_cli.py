@@ -1,10 +1,10 @@
 # from __future__ import annotations
 import pathlib
 from importlib.metadata import version
-from typing import Annotated
 from typing import Optional
 
 import typer
+from typing_extensions import Annotated
 
 from . import api
 
