@@ -63,6 +63,7 @@ def version_callback(value: bool) -> None:
 app = typer.Typer(
     add_completion=False,
     add_help_option=True,
+    pretty_exceptions_enable=False,
 )
 
 
